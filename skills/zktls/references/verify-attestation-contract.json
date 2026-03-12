@@ -1,0 +1,23 @@
+{
+  "backend": "skill:zktls.verify-attestation",
+  "description": "Verify a zk-TLS attestation and extract revealed transcript",
+  "requires": "native module (cd native && npm run build)",
+  "input": {
+    "request": {
+      "attestation": "string (required) — serialized attestation JSON from prove backend",
+      "expectedServerName": "string (optional) — hostname to validate against"
+    }
+  },
+  "output": {
+    "valid": "boolean — whether the attestation is valid",
+    "serverName": "string — server hostname from the attestation",
+    "revealedSent": "string|null — revealed sent transcript portion (UTF-8)",
+    "revealedRecv": "string|null — revealed received transcript portion (UTF-8)",
+    "attestationSha256": "string — 0x-prefixed SHA-256 of the attestation",
+    "backend": "string — 'skill:zktls.verify-attestation'"
+  },
+  "error_output": {
+    "error": "string — 'native binding required — build native/ with: cd native && npm run build'",
+    "backend": "string — 'skill:zktls.verify-attestation'"
+  }
+}

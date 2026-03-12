@@ -1,0 +1,28 @@
+{
+  "backend": "skill:zktls.bundle",
+  "description": "Turn bounded capture fields into a stable bundle receipt",
+  "input": {
+    "request": {
+      "source_url": "string (required) — original fetch URL",
+      "publisher_hint": "string (optional) — publisher name hint",
+      "headline_hint": "string (optional) — headline hint",
+      "source_policy_id": "string (optional) — source policy identifier"
+    },
+    "capture": {
+      "canonicalUrl": "string (optional) — resolved canonical URL",
+      "httpStatus": "number — HTTP status code",
+      "contentType": "string — Content-Type header",
+      "articleSha256": "string (required) — 0x-prefixed SHA-256 of article content",
+      "articleText": "string (optional) — article text preview",
+      "headline": "string (optional) — extracted headline",
+      "publisher": "string (optional) — extracted publisher"
+    },
+    "fetchedAt": "number (optional) — epoch seconds, defaults to now"
+  },
+  "output": {
+    "format": "string — 'zktls_bundle_v1'",
+    "bundle": "object — deterministic JSON bundle",
+    "bundleSha256": "string — 0x-prefixed SHA-256 of JSON.stringify(bundle)",
+    "backend": "string — 'skill:zktls.bundle'"
+  }
+}

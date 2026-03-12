@@ -1,0 +1,27 @@
+{
+  "name": "@openfox/openskills-zktls",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TLSNotary zk-TLS prover and verifier — Node.js native module via napi-rs",
+  "napi": {
+    "name": "openskills-zktls",
+    "triples": {
+      "defaults": true,
+      "additional": [
+        "aarch64-apple-darwin",
+        "aarch64-unknown-linux-gnu",
+        "x86_64-unknown-linux-gnu",
+        "x86_64-apple-darwin"
+      ]
+    }
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build-debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.0"
+  }
+}

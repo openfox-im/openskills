@@ -1,0 +1,32 @@
+{
+  "backend": "skill:zktls.prove",
+  "description": "Generate a zk-TLS attestation of an HTTPS session via TLSNotary",
+  "requires": "native module (cd native && npm run build)",
+  "input": {
+    "request": {
+      "serverHost": "string (required) — target HTTPS hostname",
+      "serverPort": "number (optional, default 443)",
+      "notaryHost": "string (required) — notary/verifier address",
+      "notaryPort": "number (optional, default 7047)",
+      "method": "string (required) — HTTP method (GET, POST, ...)",
+      "path": "string (required) — HTTP path",
+      "headers": "array (optional) — [{ name: string, value: string }]",
+      "body": "string (optional) — HTTP request body",
+      "maxSentData": "number (optional, default 4096) — max bytes to send",
+      "maxRecvData": "number (optional, default 16384) — max bytes to receive",
+      "revealRanges": "array (optional) — [{ start: number, end: number }] byte ranges of response to reveal"
+    }
+  },
+  "output": {
+    "attestation": "string — serialized TLSNotary attestation JSON",
+    "attestationSha256": "string — 0x-prefixed SHA-256 of the attestation",
+    "serverName": "string — the proven server hostname",
+    "sentLen": "number — bytes sent in the TLS session",
+    "recvLen": "number — bytes received in the TLS session",
+    "backend": "string — 'skill:zktls.prove'"
+  },
+  "error_output": {
+    "error": "string — 'native binding required — build native/ with: cd native && npm run build'",
+    "backend": "string — 'skill:zktls.prove'"
+  }
+}

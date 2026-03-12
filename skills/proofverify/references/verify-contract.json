@@ -1,0 +1,25 @@
+{
+  "backend": "skill:proofverify.verify",
+  "description": "Verify bounded bundle and subject hash relationships",
+  "input": {
+    "request": {
+      "subject_sha256": "string (optional) — expected 0x-prefixed SHA-256 of subject content",
+      "subject_body": "string|object (optional) — raw subject content, will be hashed",
+      "proof_bundle": "string|object (optional) — bundle JSON (from zktls.bundle)",
+      "proof_bundle_sha256": "string (optional) — expected 0x-prefixed SHA-256 of the bundle"
+    }
+  },
+  "output": {
+    "verdict": "string — 'valid' | 'invalid' | 'inconclusive'",
+    "summary": "string — human-readable verdict explanation",
+    "metadata": {
+      "verifier_backend": "string — 'skill:proofverify.verify'",
+      "verifier_class": "string — 'bundle_integrity_verification' | 'structural_verification'",
+      "subject": "object (optional) — { sha256 } or { declared_sha256 }",
+      "bundle": "object (optional) — { sha256, declared_bundle_sha256, referenced_subject_sha256 }",
+      "checks": "array — [{ label, ok, actual, expected }]"
+    },
+    "verifierReceiptSha256": "string — 0x-prefixed SHA-256 of verification receipt",
+    "backend": "string — 'skill:proofverify.verify'"
+  }
+}
