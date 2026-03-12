@@ -1,0 +1,38 @@
+{
+  "contractVersion": "v1",
+  "backend": "skill:crypto-x25519.encrypt",
+  "input": {
+    "type": "object",
+    "required": ["request"],
+    "properties": {
+      "request": {
+        "type": "object",
+        "required": ["publicKey", "plaintext"],
+        "properties": {
+          "publicKey": {
+            "type": "string",
+            "description": "Hex-encoded recipient public key"
+          },
+          "plaintext": {
+            "type": "string",
+            "description": "Hex-encoded plaintext"
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["ciphertext", "backend"],
+    "properties": {
+      "ciphertext": {
+        "type": "string",
+        "description": "Hex-encoded ciphertext"
+      },
+      "backend": {
+        "type": "string",
+        "const": "skill:crypto-x25519.encrypt"
+      }
+    }
+  }
+}

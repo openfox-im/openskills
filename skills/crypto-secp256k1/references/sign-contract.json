@@ -1,0 +1,45 @@
+{
+  "contractVersion": "v1",
+  "backend": "skill:crypto-secp256k1.sign",
+  "input": {
+    "type": "object",
+    "required": ["request"],
+    "properties": {
+      "request": {
+        "type": "object",
+        "required": ["privateKey", "messageHash"],
+        "properties": {
+          "privateKey": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$",
+            "description": "Hex-encoded 32-byte private key"
+          },
+          "messageHash": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$",
+            "description": "Hex-encoded 32-byte message hash"
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["signature", "recoveryId", "backend"],
+    "properties": {
+      "signature": {
+        "type": "string",
+        "description": "Hex-encoded signature"
+      },
+      "recoveryId": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 3
+      },
+      "backend": {
+        "type": "string",
+        "const": "skill:crypto-secp256k1.sign"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "contractVersion": "v1",
+  "backend": "skill:crypto-secp256r1.verify",
+  "input": {
+    "type": "object",
+    "required": ["request"],
+    "properties": {
+      "request": {
+        "type": "object",
+        "required": ["publicKey", "messageHash", "signature"],
+        "properties": {
+          "publicKey": {
+            "type": "string",
+            "description": "Hex-encoded public key"
+          },
+          "messageHash": {
+            "type": "string",
+            "description": "Hex-encoded message hash"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Hex-encoded signature"
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["valid", "backend"],
+    "properties": {
+      "valid": {
+        "type": "boolean"
+      },
+      "backend": {
+        "type": "string",
+        "const": "skill:crypto-secp256r1.verify"
+      }
+    }
+  }
+}

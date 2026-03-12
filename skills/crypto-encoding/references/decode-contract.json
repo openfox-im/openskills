@@ -1,0 +1,41 @@
+{
+  "contractVersion": "v1",
+  "backend": "skill:crypto-encoding.decode",
+  "input": {
+    "type": "object",
+    "required": ["request"],
+    "properties": {
+      "request": {
+        "type": "object",
+        "required": ["format", "encoded"],
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": ["base58", "base64", "bech32", "hex"]
+          },
+          "encoded": {
+            "type": "string",
+            "description": "Encoded string to decode"
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["data", "format", "backend"],
+    "properties": {
+      "data": {
+        "type": "string",
+        "description": "Hex-encoded decoded data"
+      },
+      "format": {
+        "type": "string"
+      },
+      "backend": {
+        "type": "string",
+        "const": "skill:crypto-encoding.decode"
+      }
+    }
+  }
+}

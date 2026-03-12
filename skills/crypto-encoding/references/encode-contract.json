@@ -1,0 +1,41 @@
+{
+  "contractVersion": "v1",
+  "backend": "skill:crypto-encoding.encode",
+  "input": {
+    "type": "object",
+    "required": ["request"],
+    "properties": {
+      "request": {
+        "type": "object",
+        "required": ["format", "data"],
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": ["base58", "base64", "bech32", "hex"]
+          },
+          "data": {
+            "type": "string",
+            "description": "Hex-encoded input data"
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["encoded", "format", "backend"],
+    "properties": {
+      "encoded": {
+        "type": "string",
+        "description": "Encoded output string"
+      },
+      "format": {
+        "type": "string"
+      },
+      "backend": {
+        "type": "string",
+        "const": "skill:crypto-encoding.encode"
+      }
+    }
+  }
+}

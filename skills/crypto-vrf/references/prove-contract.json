@@ -1,0 +1,49 @@
+{
+  "contractVersion": "v1",
+  "backend": "skill:crypto-vrf.prove",
+  "input": {
+    "type": "object",
+    "required": ["request"],
+    "properties": {
+      "request": {
+        "type": "object",
+        "required": ["seed", "input"],
+        "properties": {
+          "seed": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$",
+            "description": "Hex-encoded 32-byte seed"
+          },
+          "input": {
+            "type": "string",
+            "description": "Hex-encoded input data"
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["output", "proof", "publicKey", "backend"],
+    "properties": {
+      "output": {
+        "type": "string",
+        "pattern": "^[0-9a-fA-F]{64}$",
+        "description": "Hex-encoded 32-byte VRF output"
+      },
+      "proof": {
+        "type": "string",
+        "pattern": "^[0-9a-fA-F]{128}$",
+        "description": "Hex-encoded 64-byte VRF proof"
+      },
+      "publicKey": {
+        "type": "string",
+        "description": "Hex-encoded public key"
+      },
+      "backend": {
+        "type": "string",
+        "const": "skill:crypto-vrf.prove"
+      }
+    }
+  }
+}

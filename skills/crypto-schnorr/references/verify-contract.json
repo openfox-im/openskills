@@ -1,0 +1,41 @@
+{
+  "contractVersion": "v1",
+  "backend": "skill:crypto-schnorr.verify",
+  "input": {
+    "type": "object",
+    "required": ["request"],
+    "properties": {
+      "request": {
+        "type": "object",
+        "required": ["publicKey", "message", "signature"],
+        "properties": {
+          "publicKey": {
+            "type": "string",
+            "description": "Hex-encoded public key"
+          },
+          "message": {
+            "type": "string",
+            "description": "Hex-encoded message"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Hex-encoded tos-schnorr-ristretto255 signature"
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["valid", "backend"],
+    "properties": {
+      "valid": {
+        "type": "boolean"
+      },
+      "backend": {
+        "type": "string",
+        "const": "skill:crypto-schnorr.verify"
+      }
+    }
+  }
+}

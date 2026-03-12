@@ -1,0 +1,40 @@
+{
+  "name": "@openfox/openskills",
+  "version": "0.1.0",
+  "description": "Production-grade cryptographic algorithm skills for AI agents — agentskills.io standard",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openfox-im/openskills.git"
+  },
+  "keywords": [
+    "agent-skills",
+    "cryptography",
+    "sha256",
+    "ed25519",
+    "secp256k1",
+    "bls12-381",
+    "zero-knowledge-proofs",
+    "aead"
+  ],
+  "files": [
+    "skills/",
+    "lib/"
+  ],
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/openfox-im/openskills/issues"
+  },
+  "homepage": "https://github.com/openfox-im/openskills#readme",
+  "devDependencies": {
+    "vitest": "^4.0.18"
+  }
+}
