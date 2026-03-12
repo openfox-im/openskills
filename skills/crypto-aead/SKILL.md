@@ -2,7 +2,16 @@
 name: crypto-aead
 description: "Authenticated encryption — AES-128/256-GCM and ChaCha20-Poly1305 (RFC 8439). Use when: encrypting data with authentication, TLS record protection, secure message transport, file encryption with integrity. NOT for: hashing, signing, key exchange, or unauthenticated encryption (never use AES-CBC/CTR alone)."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "encrypt": { "entry": "scripts/encrypt.mjs", "description": "Authenticated encryption with associated data" }, "decrypt": { "entry": "scripts/decrypt.mjs", "description": "Authenticated decryption with tag verification" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  encrypt:
+    entry: scripts/encrypt.mjs
+    description: "Authenticated encryption with associated data"
+  decrypt:
+    entry: scripts/decrypt.mjs
+    description: "Authenticated decryption with tag verification"
 ---
 
 This skill provides authenticated encryption with associated data (AEAD) using two algorithm families: AES-GCM and ChaCha20-Poly1305. Use AES-GCM when hardware AES-NI acceleration is available or when TLS 1.3/QUIC compatibility is required. Use ChaCha20-Poly1305 (RFC 8439) as a portable alternative that performs well on platforms without AES hardware support. Both algorithms guarantee confidentiality and integrity — any tampering with the ciphertext or associated data is detected during decryption.

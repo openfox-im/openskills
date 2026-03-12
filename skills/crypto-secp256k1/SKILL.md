@@ -2,7 +2,16 @@
 name: crypto-secp256k1
 description: "SECP256K1 ECDSA signatures with public key recovery (Bitcoin/Ethereum compatible). Use when: signing Ethereum transactions, Bitcoin message signing, ECDSA with key recovery. NOT for: TLS/HTTPS (use secp256r1), Ed25519-based protocols, or non-ECDSA signature schemes."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "sign": { "entry": "scripts/sign.mjs", "description": "Generate ECDSA signatures over secp256k1" }, "verify": { "entry": "scripts/verify.mjs", "description": "Verify ECDSA signatures over secp256k1" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  sign:
+    entry: scripts/sign.mjs
+    description: "Generate ECDSA signatures over secp256k1"
+  verify:
+    entry: scripts/verify.mjs
+    description: "Verify ECDSA signatures over secp256k1"
 ---
 
 This skill provides ECDSA signatures on the SECP256K1 curve, the standard used by Bitcoin, Ethereum, and many other blockchain systems. Private keys are 32 bytes (a scalar in the secp256k1 field). Signatures are 64 bytes (r, s components) with an optional recovery byte that allows reconstructing the signer's public key from the signature alone. This public key recovery capability is essential for Ethereum transaction verification where the sender address is derived from the recovered key.

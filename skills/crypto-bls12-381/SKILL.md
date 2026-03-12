@@ -2,7 +2,13 @@
 name: crypto-bls12-381
 description: "BLS12-381 pairing curve operations — G1/G2 point arithmetic, scalar multiply, and batch pairing. Use when: BLS signature aggregation, zkSNARK verification, Ethereum 2.0 operations, threshold cryptography. NOT for: general-purpose signing (use ed25519/secp256k1), non-pairing ECC, or when BN254 is required."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "pairing": { "entry": "scripts/pairing.mjs", "description": "BLS12-381 pairing and point operations" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  pairing:
+    entry: scripts/pairing.mjs
+    description: "BLS12-381 pairing and point operations"
 ---
 
 This skill provides elliptic curve operations on the BLS12-381 pairing-friendly curve, widely used in BLS signatures, zero-knowledge proof systems (Groth16, PLONK), and Ethereum 2.0 consensus. Operations include G1 and G2 point decompression, validation (subgroup checks), addition, subtraction, negation, and scalar multiplication. The pairing operation computes the optimal Ate pairing `e(P, Q)` for points P in G1 and Q in G2, with batch support for up to 8 pairs in a single call for efficient multi-pairing checks.

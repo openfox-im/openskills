@@ -2,7 +2,13 @@
 name: crypto-bn254
 description: "BN254 (alt_bn128) pairing curve for zkSNARK verification and EVM precompiles. Use when: Ethereum ecPairing precompile (0x08), Groth16 proof verification, EVM-compatible zkSNARK operations. NOT for: new deployments preferring BLS12-381, non-EVM chains, or general-purpose ECC."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "pairing": { "entry": "scripts/pairing.mjs", "description": "BN254 pairing and point operations" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  pairing:
+    entry: scripts/pairing.mjs
+    description: "BN254 pairing and point operations"
 ---
 
 This skill provides elliptic curve operations on the BN254 curve (also known as alt_bn128), the pairing-friendly curve used by Ethereum's precompiled contracts at addresses 0x06 (ecAdd), 0x07 (ecMul), and 0x08 (ecPairing). Use this skill for zkSNARK proof verification (Groth16), on-chain verifier contracts, and any application requiring Ethereum EVM precompile compatibility. Operations include G1 point addition, scalar multiplication, and pairing checks.

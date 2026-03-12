@@ -2,7 +2,16 @@
 name: crypto-vrf
 description: "Verifiable Random Function — Schnorrkel-compatible DLEQ proofs on Ristretto255. Use when: generating provably fair randomness, leader election, lottery selection, sortition. NOT for: general-purpose random number generation, non-verifiable randomness, or protocols requiring non-Ristretto VRF."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "prove": { "entry": "scripts/prove.mjs", "description": "Generate VRF output and proof" }, "verify": { "entry": "scripts/verify.mjs", "description": "Verify VRF proof" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  prove:
+    entry: scripts/prove.mjs
+    description: "Generate VRF output and proof"
+  verify:
+    entry: scripts/verify.mjs
+    description: "Verify VRF proof"
 ---
 
 This skill implements a Verifiable Random Function (VRF) using DLEQ (Discrete Log Equality) proofs on the Ristretto255 group, compatible with the Schnorrkel 0.11.x VRF specification. A VRF takes a secret key and an input message and produces a deterministic pseudorandom output along with a proof that the output was correctly computed. Anyone with the corresponding public key can verify the proof without learning the secret key. Use this for leader election, lottery systems, or any protocol requiring publicly verifiable randomness.

@@ -2,7 +2,13 @@
 name: crypto-uno-proofs
 description: "UNO confidential transaction proofs — shield commitment, ciphertext validity, commitment equality, and balance proofs. Use when: verifying TOS confidential transfers, validating shield/unshield operations, checking commitment equality across accounts. NOT for: non-TOS proof systems, generating proofs (prover-side), or general ZK circuits."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "verify": { "entry": "scripts/verify.mjs", "description": "Verify UNO zero-knowledge proofs" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  verify:
+    entry: scripts/verify.mjs
+    description: "Verify UNO zero-knowledge proofs"
 ---
 
 This skill verifies UNO zero-knowledge proofs used in TOS confidential transactions. Four proof types are supported: ShieldCommitmentProof (96 bytes) proves that a Pedersen commitment correctly encodes a publicly known value; CiphertextValidityProof proves that an ElGamal ciphertext encrypts the same value as a Pedersen commitment, with two sub-variants — T0 (128 bytes) for standard transfers and T1 (160 bytes) for extended transfers; CommitmentEqProof (192 bytes) proves that two commitments with different blinding factors encode the same value; and BalanceProof proves that the sum of input commitments equals the sum of output commitments (conservation of value).

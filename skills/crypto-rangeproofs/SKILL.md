@@ -2,7 +2,13 @@
 name: crypto-rangeproofs
 description: "Bulletproofs range proof verification with Merlin transcript Fiat-Shamir transform. Use when: verifying confidential transaction amounts, validating committed values are in range, privacy-preserving balance checks. NOT for: generating range proofs (prover-side), general-purpose ZK circuits, or non-Bulletproofs proof systems."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "verify": { "entry": "scripts/verify.mjs", "description": "Verify Bulletproofs range proofs" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  verify:
+    entry: scripts/verify.mjs
+    description: "Verify Bulletproofs range proofs"
 ---
 
 This skill implements Bulletproofs range proof verification, which proves that a committed value lies within a specified range without revealing the value itself. Bulletproofs are logarithmic-size range proofs (O(log n) in the bit-length of the range) and are used in confidential transaction systems to ensure that transaction amounts are non-negative without disclosing them. The Fiat-Shamir transform uses Merlin transcripts for deterministic, domain-separated challenge derivation.

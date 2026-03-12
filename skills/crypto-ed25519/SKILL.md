@@ -2,7 +2,16 @@
 name: crypto-ed25519
 description: "Ed25519 digital signatures with Curve25519 and Ristretto255 infrastructure. Use when: signing messages, verifying signatures, public-key authentication, batch verification. NOT for: encryption (use X25519+AEAD), Ethereum-style signing (use secp256k1), or key exchange (use crypto-x25519)."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "sign": { "entry": "scripts/sign.mjs", "description": "Generate Ed25519 signatures" }, "verify": { "entry": "scripts/verify.mjs", "description": "Verify Ed25519 signatures with optional batch mode" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  sign:
+    entry: scripts/sign.mjs
+    description: "Generate Ed25519 signatures"
+  verify:
+    entry: scripts/verify.mjs
+    description: "Verify Ed25519 signatures with optional batch mode"
 ---
 
 This skill implements Ed25519 digital signatures as specified in RFC 8032. Use it for general-purpose public-key signing and verification where speed and small key/signature sizes matter. Private keys are 32 bytes, public keys are 32 bytes (compressed Edwards point), and signatures are 64 bytes. Internally, Ed25519 uses SHA-512 for nonce derivation and challenge computation. The sign backend takes a private key (or seed) and a message, returning a 64-byte signature. The verify backend takes a public key, message, and signature, returning a boolean result.

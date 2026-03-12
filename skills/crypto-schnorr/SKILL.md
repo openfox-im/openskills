@@ -2,7 +2,16 @@
 name: crypto-schnorr
 description: "TOS-variant Schnorr signatures on Ristretto255 with deterministic and batch verification. Use when: TOS transaction signing, TOS-compatible signature generation, batch signature verification. NOT for: standard Ed25519 signing, Bitcoin Schnorr (BIP-340), or non-TOS protocols."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "sign": { "entry": "scripts/sign.mjs", "description": "Generate TOS Schnorr signatures" }, "verify": { "entry": "scripts/verify.mjs", "description": "Verify TOS Schnorr signatures" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  sign:
+    entry: scripts/sign.mjs
+    description: "Generate TOS Schnorr signatures"
+  verify:
+    entry: scripts/verify.mjs
+    description: "Verify TOS Schnorr signatures"
 ---
 
 This skill implements a custom TOS-variant Schnorr signature scheme on the Ristretto255 group. This is NOT standard Ed25519 Schnorr — the construction differs in how the public key is derived and how challenges are computed. The public key is computed as `priv^(-1) * H`, where H is the Pedersen blinding generator (not the standard basepoint). The challenge is derived as `SHA3-512(PK || msg || r)`, binding the public key, message, and nonce commitment together. Signatures are deterministic.

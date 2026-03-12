@@ -2,7 +2,16 @@
 name: crypto-encoding
 description: "Cryptographic data encoding — Base58, Base64, Bech32, and TOS-compatible address serialization. Use when: encoding binary data for display, address formatting, QR code payloads, human-readable binary representation. NOT for: encryption, compression, or general text encoding (use standard UTF-8)."
 license: MIT
-metadata: { "openfox": { "requires": { "bins": ["node"] }, "provider-backends": { "encode": { "entry": "scripts/encode.mjs", "description": "Encode binary data to Base58/Base64/hex" }, "decode": { "entry": "scripts/decode.mjs", "description": "Decode Base58/Base64/hex to binary" } } } }
+requires:
+  bins:
+    - node
+provider-backends:
+  encode:
+    entry: scripts/encode.mjs
+    description: "Encode binary data to Base58/Base64/hex"
+  decode:
+    entry: scripts/decode.mjs
+    description: "Decode Base58/Base64/hex to binary"
 ---
 
 This skill handles encoding and decoding of cryptographic data into human-readable and transport-safe formats. Base58 encoding (Bitcoin-style alphabet, no 0/O/I/l ambiguity) is optimized for common sizes of 32 bytes and 64 bytes, with a general-purpose path for arbitrary lengths. Base64 provides standard RFC 4648 encoding. Bech32 encoding includes a checksum and is used for TOS network addresses with the "tos" prefix for mainnet and "tst" prefix for testnet, performing 8-bit to 5-bit conversion internally.
