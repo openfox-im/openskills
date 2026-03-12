@@ -1,6 +1,6 @@
 ---
 name: proofverify
-description: "Deterministic proof verification — validates evidence bundle integrity by comparing SHA-256 hashes of subjects and bundles. Use when: verifying zktls bundle receipts, validating content integrity proofs, checking subject-bundle hash relationships. NOT for: ZK circuit verification (use crypto-uno-proofs/crypto-rangeproofs), signature verification (use ed25519/secp256k1), or bundle creation (use zktls)."
+description: "Proof verification for zk-TLS evidence bundles — three backends: hash integrity (verify), TLSNotary attestation validation (verify-attestations), and M-of-N consensus checking (verify-consensus). Use when: verifying zktls bundle receipts, validating TLSNotary session proofs, checking M-of-N agent consensus. NOT for: ZK circuit verification (use crypto-uno-proofs/crypto-rangeproofs), signature verification (use ed25519/secp256k1), or bundle creation (use zktls)."
 license: MIT
 requires:
   bins:
@@ -8,11 +8,23 @@ requires:
 provider-backends:
   verify:
     entry: scripts/verify.mjs
-    description: "Verify bounded bundle and subject hash relationships"
+    description: "Verify bounded bundle and subject hash relationships (pure JS)"
+  verify-attestations:
+    entry: scripts/verify-attestations.mjs
+    description: "Validate TLSNotary attestation cryptographic structure within a bundle (native binding required)"
+  verify-consensus:
+    entry: scripts/verify-consensus.mjs
+    description: "Check M-of-N consensus across multiple agent attestation results (pure JS)"
 ---
 
-This skill verifies the integrity of evidence bundles produced by the zktls skill. Given a subject (content) and a proof bundle, it performs SHA-256 hash comparisons to determine whether the bundle accurately represents the subject. The verification result is one of three verdicts: "valid" (all hash checks pass), "invalid" (at least one check fails), or "inconclusive" (insufficient data for comparison).
+Three-backend verification pipeline for zk-TLS evidence:
 
-The verify backend accepts a request with optional fields: subject_sha256 (expected hash of the subject content), subject_body (raw subject content for hash computation), proof_bundle (the bundle JSON object), and proof_bundle_sha256 (expected hash of the bundle). It performs up to three checks: subject hash match, bundle hash match, and cross-reference (the bundle's internal article_sha256 matches the declared subject hash). Each check produces a labeled result with actual vs expected values.
+**verify** — Pure JS hash comparison. Given a subject and proof bundle, compares SHA-256 hashes. Returns valid/invalid/inconclusive. Deterministic, no native dependency.
 
-This is the second stage of a two-stage evidence pipeline: zktls creates the bundle, and this skill validates it. The verification is purely deterministic — same inputs always produce the same verdict. A verifier receipt SHA-256 is returned for audit trails. Currently implements hash-based integrity verification; future versions will support TLSNotary session proof validation.
+**verify-attestations** — Validates each TLSNotary attestation in a bundle via the native module (`openskills-zktls.node`). Checks attestation structure, server_name consistency, and optional whitelist. Requires: `cd native && npm run build`.
+
+**verify-consensus** — Pure JS M-of-N consensus check. Given N agent results, verifies at least M agree on verdict, server_name, and article content hash. Checks attestation uniqueness (independent proofs).
+
+Load `references/verify-contract.json` for the hash verify I/O contract.
+Load `references/verify-attestations-contract.json` for the attestation verify I/O contract.
+Load `references/verify-consensus-contract.json` for the consensus verify I/O contract.

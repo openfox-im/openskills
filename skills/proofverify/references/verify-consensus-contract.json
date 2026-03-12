@@ -1,0 +1,30 @@
+{
+  "backend": "skill:proofverify.verify-consensus",
+  "description": "Check M-of-N consensus across multiple agent attestation results",
+  "input": {
+    "request": {
+      "m": "number (required) — minimum agreeing agents",
+      "n": "number (required) — total agents",
+      "agentResults": "object[] (required) — [{ verdict, serverName?, articleSha256?, attestationSha256? }]",
+      "expectedServerName": "string (optional) — required server hostname",
+      "expectedArticleSha256": "string (optional) — required content hash"
+    }
+  },
+  "output": {
+    "verdict": "string — 'valid' | 'invalid' | 'inconclusive'",
+    "verdictReason": "string — 'consensus_reached' | 'consensus_not_reached' | 'no_checks_available'",
+    "summary": "string — human-readable consensus summary",
+    "metadata": {
+      "verifier_backend": "string — 'skill:proofverify.verify-consensus'",
+      "verifier_class": "string — 'm_of_n_consensus_verification'",
+      "consensus": "string — e.g. '3/5'",
+      "threshold": "string — e.g. '3/5'",
+      "threshold_met": "boolean — whether M-of-N was reached",
+      "majority_verdict": "string — the verdict with most agreement",
+      "verdict_distribution": "object — { factual: 3, misleading: 1, ... }",
+      "checks": "array — [{ label, ok, actual, expected, details? }]"
+    },
+    "verifierReceiptSha256": "string — 0x-prefixed SHA-256 of verification receipt",
+    "backend": "string — 'skill:proofverify.verify-consensus'"
+  }
+}

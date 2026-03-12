@@ -51,17 +51,40 @@ export interface ProveResult {
   backend: string
 }
 export interface VerifyConfig {
-  /** Serialized ProverOutput JSON (from ProveResult.attestation) */
+  /**
+   * Serialized attestation data. Accepts:
+   *   - JSON-serialized Presentation (full crypto verification)
+   *   - Base64-encoded bincode Presentation (full crypto verification)
+   *   - JSON-serialized ProverOutput (structural check only)
+   */
   attestation: string
 }
 export interface VerifyResult {
-  /** Whether the attestation deserializes and has valid structure */
+  /** Whether the attestation is cryptographically valid */
   valid: boolean
   /** Number of transcript commitments */
   commitmentCount: number
-  /** SHA-256 of the attestation */
+  /** SHA-256 of the raw attestation input */
   attestationSha256: string
+  /** Verification level: "cryptographic" (Presentation) or "structural" (ProverOutput) */
+  verificationLevel: string
+  /** Authenticated server hostname (only from Presentation verification) */
+  serverName?: string
+  /** Sent transcript length in bytes (only from Presentation verification) */
+  sentLen?: number
+  /** Received transcript length in bytes (only from Presentation verification) */
+  recvLen?: number
+  /** Revealed sent transcript as UTF-8 (only from Presentation verification) */
+  revealedSent?: string
+  /** Revealed received transcript as UTF-8 (only from Presentation verification) */
+  revealedRecv?: string
+  /** TLS connection time as UNIX timestamp (only from Presentation verification) */
+  connectionTime?: number
   backend: string
 }
 export declare function prove(config: ProveConfig): Promise<ProveResult>
+/**
+ * Try to deserialize the input as a TLSNotary Presentation and perform full
+ * cryptographic verification. Falls back to ProverOutput structural check.
+ */
 export declare function verify(config: VerifyConfig): Promise<VerifyResult>

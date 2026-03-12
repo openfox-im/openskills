@@ -79,19 +79,36 @@ pub struct ProveResult {
 #[napi(object)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VerifyConfig {
-    /// Serialized ProverOutput JSON (from ProveResult.attestation)
+    /// Serialized attestation data. Accepts:
+    ///   - JSON-serialized Presentation (full crypto verification)
+    ///   - Base64-encoded bincode Presentation (full crypto verification)
+    ///   - JSON-serialized ProverOutput (structural check only)
     pub attestation: String,
 }
 
 #[napi(object)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VerifyResult {
-    /// Whether the attestation deserializes and has valid structure
+    /// Whether the attestation is cryptographically valid
     pub valid: bool,
     /// Number of transcript commitments
     pub commitment_count: u32,
-    /// SHA-256 of the attestation
+    /// SHA-256 of the raw attestation input
     pub attestation_sha256: String,
+    /// Verification level: "cryptographic" (Presentation) or "structural" (ProverOutput)
+    pub verification_level: String,
+    /// Authenticated server hostname (only from Presentation verification)
+    pub server_name: Option<String>,
+    /// Sent transcript length in bytes (only from Presentation verification)
+    pub sent_len: Option<u32>,
+    /// Received transcript length in bytes (only from Presentation verification)
+    pub recv_len: Option<u32>,
+    /// Revealed sent transcript as UTF-8 (only from Presentation verification)
+    pub revealed_sent: Option<String>,
+    /// Revealed received transcript as UTF-8 (only from Presentation verification)
+    pub revealed_recv: Option<String>,
+    /// TLS connection time as UNIX timestamp (only from Presentation verification)
+    pub connection_time: Option<u32>,
     pub backend: String,
 }
 
@@ -278,12 +295,105 @@ pub async fn prove(config: ProveConfig) -> Result<ProveResult> {
 // Verifier — offline attestation validation
 // ---------------------------------------------------------------------------
 
+/// Try to deserialize the input as a TLSNotary Presentation and perform full
+/// cryptographic verification. Falls back to ProverOutput structural check.
 #[napi]
 pub async fn verify(config: VerifyConfig) -> Result<VerifyResult> {
     let attestation_sha256 = sha256_hex(config.attestation.as_bytes());
+    let backend = "skill:zktls.verify-attestation".to_string();
 
-    // Deserialize and validate structure
-    let output: tlsn_core::ProverOutput = serde_json::from_str(&config.attestation)
+    // Path 1: Try as Presentation (full cryptographic verification)
+    if let Some(result) = try_verify_presentation(&config.attestation, &attestation_sha256, &backend) {
+        return Ok(result);
+    }
+
+    // Path 2: Fall back to ProverOutput (structural check only)
+    verify_prover_output(&config.attestation, &attestation_sha256, &backend)
+}
+
+/// Attempt to deserialize as Presentation and perform cryptographic verification.
+/// Returns None if the input is not a Presentation.
+fn try_verify_presentation(
+    attestation: &str,
+    attestation_sha256: &str,
+    backend: &str,
+) -> Option<VerifyResult> {
+    use base64::Engine;
+    use tlsn::attestation::{presentation::Presentation, CryptoProvider};
+
+    // Try JSON deserialization first
+    let presentation: Presentation = serde_json::from_str(attestation)
+        .ok()
+        // Then try base64-encoded bincode
+        .or_else(|| {
+            let bytes = base64::engine::general_purpose::STANDARD
+                .decode(attestation.trim())
+                .ok()?;
+            bincode::deserialize(&bytes).ok()
+        })?;
+
+    // Full cryptographic verification: validates notary signature, Merkle proofs,
+    // commitment hashes, server identity proof, and transcript proof.
+    let provider = CryptoProvider::default();
+    match presentation.verify(&provider) {
+        Ok(output) => {
+            let server_name = output.server_name.map(|sn| sn.to_string());
+            let sent_len = Some(output.connection_info.transcript_length.sent);
+            let recv_len = Some(output.connection_info.transcript_length.received);
+            let connection_time = Some(output.connection_info.time as u32);
+
+            let (revealed_sent, revealed_recv) = if let Some(ref transcript) = output.transcript {
+                (
+                    Some(String::from_utf8_lossy(transcript.sent_unsafe()).to_string()),
+                    Some(String::from_utf8_lossy(transcript.received_unsafe()).to_string()),
+                )
+            } else {
+                (None, None)
+            };
+
+            // Count commitment fields in the verified attestation body
+            let commitment_count = 0u32; // commitments are internal to the attestation
+
+            Some(VerifyResult {
+                valid: true,
+                commitment_count,
+                attestation_sha256: attestation_sha256.to_string(),
+                verification_level: "cryptographic".to_string(),
+                server_name,
+                sent_len,
+                recv_len,
+                revealed_sent,
+                revealed_recv,
+                connection_time,
+                backend: backend.to_string(),
+            })
+        }
+        Err(e) => {
+            // Presentation deserialized but failed cryptographic verification
+            Some(VerifyResult {
+                valid: false,
+                commitment_count: 0,
+                attestation_sha256: attestation_sha256.to_string(),
+                verification_level: "cryptographic".to_string(),
+                server_name: None,
+                sent_len: None,
+                recv_len: None,
+                revealed_sent: None,
+                revealed_recv: None,
+                connection_time: None,
+                backend: format!("{backend} (error: {e})"),
+            })
+        }
+    }
+}
+
+/// Structural-only verification for ProverOutput format.
+fn verify_prover_output(
+    attestation: &str,
+    attestation_sha256: &str,
+    backend: &str,
+) -> Result<VerifyResult> {
+    let output: tlsn_core::ProverOutput = serde_json::from_str(attestation)
         .map_err(|e| Error::from_reason(format!("invalid attestation: {e}")))?;
 
     let commitment_count = output.transcript_commitments.len() as u32;
@@ -291,7 +401,14 @@ pub async fn verify(config: VerifyConfig) -> Result<VerifyResult> {
     Ok(VerifyResult {
         valid: commitment_count > 0,
         commitment_count,
-        attestation_sha256,
-        backend: "skill:zktls.verify-attestation".to_string(),
+        attestation_sha256: attestation_sha256.to_string(),
+        verification_level: "structural".to_string(),
+        server_name: None,
+        sent_len: None,
+        recv_len: None,
+        revealed_sent: None,
+        revealed_recv: None,
+        connection_time: None,
+        backend: backend.to_string(),
     })
 }

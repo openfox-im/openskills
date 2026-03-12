@@ -1,0 +1,34 @@
+{
+  "backend": "skill:proofverify.verify-attestations",
+  "description": "Validate TLSNotary attestation cryptographic structure within a bundle",
+  "requires": "native module (cd native && npm run build)",
+  "input": {
+    "request": {
+      "attestations": "string[] (required) — serialized attestation JSONs from zktls.prove",
+      "expectedServerName": "string (optional) — hostname all attestations must match",
+      "serverNameWhitelist": "string[] (optional) — allowed server hostnames",
+      "expectedArticleSha256": "string (optional) — expected content hash across attestations"
+    }
+  },
+  "output": {
+    "verdict": "string — 'valid' | 'invalid' | 'inconclusive'",
+    "verdictReason": "string — 'all_attestations_valid' | 'attestation_check_failed' | 'no_checks_available'",
+    "summary": "string — human-readable verification summary",
+    "metadata": {
+      "verifier_backend": "string — 'skill:proofverify.verify-attestations'",
+      "verifier_class": "string — 'tlsnotary_attestation_verification'",
+      "total_attestations": "number — total attestations checked",
+      "valid_attestations": "number — attestations that passed validation",
+      "server_names": "string[] — unique server names found",
+      "attestation_hashes": "string[] — SHA-256 hashes of valid attestations",
+      "checks": "array — [{ label, ok, actual, expected }]",
+      "results": "array — [{ index, valid, commitmentCount?, attestationSha256?, error? }]"
+    },
+    "verifierReceiptSha256": "string — 0x-prefixed SHA-256 of verification receipt",
+    "backend": "string — 'skill:proofverify.verify-attestations'"
+  },
+  "error_output": {
+    "error": "string — 'native binding required — build native/ with: cd native && npm run build'",
+    "backend": "string — 'skill:proofverify.verify-attestations'"
+  }
+}
